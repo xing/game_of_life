@@ -5,9 +5,9 @@ defmodule GameOfLife.Board do
   )
 
 
-	def get_new_active_cells([head|tail], {board_size,board_cells} = board) do
-		new_cells = get_new_active_cells(tail,board)
-		if is_within_board(board_size,head) and will_stay_alive(board_cells, head) do
+	def get_new_active_cells([head|tail], %GameOfLife.Board{} = board) do
+		new_cells = get_new_active_cells(tail, board)
+		if is_within_board(board.size, head) and will_stay_alive(board.alive_cells, head) do
 			[head|new_cells]
 		else
 			new_cells
