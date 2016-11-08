@@ -3,13 +3,13 @@ defmodule GameOfLifeTest do
 	doctest GameOfLife
 
 	test "dead board" do
-		previous_board = %GameOfLife.Board{size: {5,5}, alive_cells: []}
+		previous_board = %GameOfLife.Board{size: {5,5}, alive_cells: MapSet.new([])}
 		assert previous_board == GameOfLife.get_next_state(previous_board)
 	end
 
 	test "one alive cell in the board" do
-		previous_board = %GameOfLife.Board{size: {5,5}, alive_cells: [{1,1}]}
-		expected_board = %GameOfLife.Board{size: {5,5}, alive_cells: []}
+		previous_board = %GameOfLife.Board{size: {5,5}, alive_cells: MapSet.new([{1,1}])}
+		expected_board = %GameOfLife.Board{size: {5,5}, alive_cells: MapSet.new([])}
 		assert expected_board == GameOfLife.get_next_state(previous_board)
 	end
 end

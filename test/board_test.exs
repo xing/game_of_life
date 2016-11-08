@@ -92,31 +92,31 @@ defmodule BoardTest do
 	end
 
 	test "get dead neighbours" do
-		board = %GameOfLife.Board{size: {5,5}, alive_cells: []}
+		board = %GameOfLife.Board{size: {5,5}, alive_cells: %MapSet{}}
 		dead_neighbour = [{0,0}]
 		assert dead_neighbour == get_dead_neighbours(board,{-1,-1} )
 	end
 
 	test "get dead neighbours doesn't return alive cells" do
-		board = %GameOfLife.Board{size: {5,5}, alive_cells: [{0,0}]}
+		board = %GameOfLife.Board{size: {5,5}, alive_cells: MapSet.new [{0,0}]}
 		dead_neighbour = []
 		assert dead_neighbour == get_dead_neighbours(board,{-1,-1} )
 	end
 
 	test "get newborn cells" do
-		board = %GameOfLife.Board{size: {5,5}, alive_cells: [{-1,-1}, {-1,0}, {0,-1}]}
-		assert [{0,0}] == get_newborn_cells(board)
+		board = %GameOfLife.Board{size: {5,5}, alive_cells: MapSet.new [{-1,-1}, {-1,0}, {0,-1}]}
+		assert MapSet.new([{0,0}]) == get_newborn_cells(board)
 	end
 
 	test "get next state of board" do
-		board = %GameOfLife.Board{size: {5,5}, alive_cells: [{-1,-1}, {-1,0}, {0,-1}]}
-		new_board = %GameOfLife.Board{size: {5,5}, alive_cells: [{0,0}]}
+		board = %GameOfLife.Board{size: {5,5}, alive_cells: MapSet.new([{-1,-1}, {-1,0}, {0,-1}])}
+		new_board = %GameOfLife.Board{size: {5,5}, alive_cells: MapSet.new([{0,0}])}
 		assert next_board_state(board) == new_board
 	end
 
 	test "get next state of board 2" do
-		board = %GameOfLife.Board{size: {5,5}, alive_cells: [{-1,-1}, {-1,0}, {0,-1}, {0,0}, {-1,1}, {0,4}, {3,1}, {4,1}, {3,2}]}
-		new_board = %GameOfLife.Board{size: {5,5}, alive_cells: [{0,1}, {3,1}, {4,1}, {3,2}, {4,2}]}
-		#assert next_board_state(board) == new_board
+		board = %GameOfLife.Board{size: {5,5}, alive_cells: MapSet.new [{-1,-1}, {-1,0}, {0,-1}, {0,0}, {-1,1}, {0,4}, {3,1}, {4,1}, {3,2}]}
+		new_board = %GameOfLife.Board{size: {5,5}, alive_cells: MapSet.new [{0,1}, {3,1}, {4,1}, {3,2}, {4,2}]}
+		assert next_board_state(board) == new_board
 	end
 end
