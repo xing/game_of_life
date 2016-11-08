@@ -4,14 +4,14 @@ defmodule GameOfLife.Ticker do
 
   ## Examples
 
-      iex> {:ok, pid} = GameOfLife.Ticker.start_link(self())
-      iex>  GameOfLife.Ticker.start_ticker(pid)
+      GameOfLife.Ticker.start_link(self())
+      iex>  GameOfLife.Ticker.start_ticker
       {:ok, :started }
-      iex>  GameOfLife.Ticker.start_ticker(pid)
-      {:error, :already_started }
-      iex>  GameOfLife.Ticker.stop_ticker(pid)
+      iex>  GameOfLife.Ticker.start_ticker
+      {:error, :ticker_already_started }
+      iex>  GameOfLife.Ticker.stop_ticker
       {:ok, :stopped }
-      iex>  GameOfLife.Ticker.stop_ticker(pid)
+      iex>  GameOfLife.Ticker.stop_ticker
       {:error, :already_stopped }
 
   """
@@ -23,23 +23,23 @@ defmodule GameOfLife.Ticker do
 
   def start_link(owner, opts \\ []) do
     init = %GameOfLife.Ticker{owner_pid: owner, interval: (opts[:interval] || @default_interval_ms)}
-    GenServer.start_link(__MODULE__, init)
+    GenServer.start_link(__MODULE__, init, [name: __MODULE__])
   end
 
-  def start_ticker(pid) do
-    GenServer.call(pid, :start)
+  def start_ticker do
+    GenServer.call(__MODULE__, :start)
   end
 
-  def stop_ticker(pid) do
-    GenServer.call(pid, :stop)
+  def stop_ticker do
+    GenServer.call(__MODULE__, :stop)
   end
 
-  def set_interval(pid, interval) do
-    GenServer.call(pid, {:set_interval, interval})
+  def set_interval(interval) do
+    GenServer.call(__MODULE__, {:set_interval, interval})
   end
 
-  def get_state(pid) do
-    GenServer.call(pid, :get_state)
+  def get_state do
+    GenServer.call(__MODULE__, :get_state)
   end
 
   def handle_call(:stop, _from, %GameOfLife.Ticker{ticker_state: :started} = state) do
@@ -59,7 +59,7 @@ defmodule GameOfLife.Ticker do
   end
 
   def handle_call(:start, _from, %GameOfLife.Ticker{ticker_state: :started} = state) do
-    {:reply, {:error, :already_started}, state}
+    {:reply, {:error, :ticker_already_started}, state}
   end
 
   def handle_call(:get_state, _from, state) do
@@ -72,7 +72,7 @@ defmodule GameOfLife.Ticker do
   end
 
   def handle_call({:set_interval, _}, _from, state) do
-    {:reply, {:error, :already_started}, state}
+    {:reply, {:error, :ticker_already_started}, state}
   end
 
 end
