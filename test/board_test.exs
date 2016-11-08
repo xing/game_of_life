@@ -110,13 +110,20 @@ defmodule BoardTest do
 
   test "get next state of board" do
     board = %GameOfLife.Board{size: {5,5}, alive_cells: MapSet.new([{-1,-1}, {-1,0}, {0,-1}])}
-    new_board = %GameOfLife.Board{size: {5,5}, alive_cells: MapSet.new([{0,0}])}
+    new_board = %GameOfLife.Board{size: {5,5}, alive_cells: MapSet.new([{0,0}]), generation: 1}
     assert next_board_state(board) == new_board
   end
 
   test "get next state of board 2" do
     board = %GameOfLife.Board{size: {5,5}, alive_cells: MapSet.new [{-1,-1}, {-1,0}, {0,-1}, {0,0}, {-1,1}, {0,4}, {3,1}, {4,1}, {3,2}]}
-    new_board = %GameOfLife.Board{size: {5,5}, alive_cells: MapSet.new [{0,1}, {3,1}, {4,1}, {3,2}, {4,2}]}
+    new_board = %GameOfLife.Board{size: {5,5}, alive_cells: MapSet.new([{0,1}, {3,1}, {4,1}, {3,2}, {4,2}]), generation: 1}
     assert next_board_state(board) == new_board
   end
+
+  test "generation is incremented by one" do
+    board = %GameOfLife.Board{generation: 5}
+    new_board = %{board | generation: 6}
+    assert next_board_state(board) == new_board
+  end
+
 end
