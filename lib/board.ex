@@ -1,4 +1,5 @@
 defmodule GameOfLife.Board do
+  alias GameOfLife.Board, as: Board
   defstruct(
     generation: 0, # iteration number
     size: {5,5}, # size of board {x,y}
@@ -8,32 +9,32 @@ defmodule GameOfLife.Board do
 
   @neighbour_range -1..1
 
-  def next_board_state(%GameOfLife.Board{} = board) do
+  def next_board_state(%Board{} = board) do
     # TODO This is a chapu. Try to find a better way.
     combined_board = %{board | alive_cells: MapSet.union(board.alive_cells, board.foreign_alive_cells)}
     new_alive_cells = MapSet.union(survivor_cells(combined_board), newborn_cells(combined_board))
     %{board | alive_cells: new_alive_cells, generation: board.generation + 1}
   end
 
-  defp survivor_cells(%GameOfLife.Board{} = board) do
+  defp survivor_cells(%Board{} = board) do
     board.alive_cells
     |> Enum.filter(&(within_board?(board.size, &1) and will_stay_alive?(board.alive_cells, &1)))
     |> MapSet.new
   end
 
-  defp newborn_cells(%GameOfLife.Board{} = board) do
+  defp newborn_cells(%Board{} = board) do
     board.alive_cells
     |> Enum.flat_map(&(newborn_neighbour_cells(board, &1)))
     |> Enum.filter(&(will_become_alive?(board.alive_cells, &1)))
     |> MapSet.new
   end
 
-  defp newborn_neighbour_cells(%GameOfLife.Board{} = board, alive_cell) do
+  defp newborn_neighbour_cells(%Board{} = board, alive_cell) do
     neighbour_cells(alive_cell)
     |> Enum.filter(&(!alive_cell?(board, &1) and within_board?(board.size,&1)))
   end
 
-  defp alive_cell?(%GameOfLife.Board{} = board, cell) do
+  defp alive_cell?(%Board{} = board, cell) do
     Enum.member?(board.alive_cells, cell)
   end
 

@@ -1,6 +1,7 @@
 defmodule GameOfLife.BoardGenerator do
+  alias GameOfLife.Board, as: Board
 
-  def new(board \\  %GameOfLife.Board{}) do
+  def new(board \\  %Board{}) do
     spawn fn -> loop(board) end
   end
 
@@ -12,7 +13,7 @@ defmodule GameOfLife.BoardGenerator do
   defp loop(board) do
     receive do
       {:next_board_state, from} ->
-        next_board_state = GameOfLife.Board.next_board_state(board)
+        next_board_state = Board.next_board_state(board)
         send(from, next_board_state)
         loop(next_board_state)
     end
