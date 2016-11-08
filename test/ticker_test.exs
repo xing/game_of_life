@@ -17,25 +17,25 @@ defmodule GameOfLife.TickerTest do
       assert state.interval == new_interval
     end
 
-    test "setting when started", context do
+    test "setting when started" do
       {:ok, :started} = GameOfLife.Ticker.start_ticker
 
       assert {:error, :ticker_already_started} == GameOfLife.Ticker.set_interval(666)
     end
   end
 
-  test "set internal ref after starting ticker", context do
+  test "set internal ref after starting ticker" do
     {:ok, :started} = GameOfLife.Ticker.start_ticker
     {:ok, %GameOfLife.Ticker{interval_ref: interval_ref}} = GameOfLife.Ticker.get_state
     assert interval_ref != nil
   end
 
-  test "receive tick message", context do
+  test "receive tick message" do
     {:ok, :started} = GameOfLife.Ticker.start_ticker
     assert_receive :tick, 501
   end
 
-  test "stop the ticker", context do
+  test "stop the ticker" do
     {:ok, :started} = GameOfLife.Ticker.start_ticker
     assert_receive :tick, 501
 
@@ -52,7 +52,7 @@ defmodule GameOfLife.TickerTest do
   test "specifying interval via options", context do
     # Because it was already started we need to stop it
     GenServer.stop(context.ticker)
-    {:ok, pid} = GameOfLife.Ticker.start_link(self, interval: 42)
+    {:ok, _} = GameOfLife.Ticker.start_link(self, interval: 42)
     {:ok, state} = GameOfLife.Ticker.get_state
 
     assert state.interval == 42
