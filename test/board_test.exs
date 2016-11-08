@@ -3,29 +3,31 @@ defmodule BoardTest do
   doctest GameOfLife.Board
   import GameOfLife.Board
 
-  # test "a cell should stay alive if it has 2 neighbours" do
-  #   board_cells = [{4,5}, {6,6}]
-  #   current_cell = {5,5}
-  #   assert will_stay_alive?(board_cells, current_cell)
-  # end
-  #
-  # test "a cell should stay alive if it has 3 neighbours" do
-  #   board_cells = [{4,5}, {6,6}, {4,4}]
-  #   current_cell = {5,5}
-  #   assert will_stay_alive?(board_cells, current_cell)
-  # end
-  #
-  # test "a cell should not stay alive if it has >3 neighbours" do
-  #   board_cells = [{4,5}, {6,6}, {4,4}, {5,4}]
-  #   current_cell = {5,5}
-  #   refute will_stay_alive?(board_cells, current_cell)
-  # end
-  #
-  # test "a cell should not stay alive if it has <2 neighbours" do
-  #   board_cells = [{4,5}]
-  #   current_cell = {5,5}
-  #   refute will_stay_alive?(board_cells, current_cell)
-  # end
+  test "a cell should stay alive if it has 2 neighbours" do
+    board = %GameOfLife.Board{size: {5,5}, alive_cells: MapSet.new([{0,0}, {1,1}, {2,2}])}
+    assert Enum.member?(next_board_state(board).alive_cells, {1,1})
+  end
+
+  test "a cell should stay alive if it has 3 neighbours" do
+    board = %GameOfLife.Board{size: {5,5}, alive_cells: MapSet.new([{0,0}, {1,1}, {2,2}, {2,0}])}
+    assert Enum.member?(next_board_state(board).alive_cells, {1,1})
+  end
+
+  test "a cell should not stay alive if it has >3 neighbours" do
+    board = %GameOfLife.Board{size: {5,5}, alive_cells: MapSet.new([{0,0}, {0,1}, {1,1}, {1,0}, {2,0}])}
+    refute Enum.member?(next_board_state(board).alive_cells, {1,0})
+  end
+
+  test "a new cell is born if it has exactly 3 neighbours" do
+    board = %GameOfLife.Board{size: {5,5}, alive_cells: MapSet.new([{0,0}, {1,1}, {2,0}])}
+    assert Enum.member?(next_board_state(board).alive_cells, {1,0})
+  end
+
+  test "a cell should not stay alive if it has <2 neighbours" do
+    board = %GameOfLife.Board{size: {5,5}, alive_cells: MapSet.new([{0,0}, {2,2}])}
+    expected_board =  %{board | alive_cells: MapSet.new([]), generation: 1}
+    assert expected_board == next_board_state(board)
+  end
 
   test "get next state of board" do
     board = %GameOfLife.Board{size: {5,5}, foreign_alive_cells: MapSet.new([{-1,-1}, {-1,0}, {0,-1}])}
