@@ -1,5 +1,6 @@
 defmodule GameOfLife.BoardServer do
   alias GameOfLife.Board, as: Board
+  alias GameOfLife.PatternLoader, as: PatternLoader
   use GenServer
 
   defstruct board: %Board{}

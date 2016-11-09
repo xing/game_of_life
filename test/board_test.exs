@@ -45,6 +45,17 @@ defmodule BoardTest do
     assert next_board_state(board) == new_board
   end
 
+  test "get next state of board with specified origin" do
+    board = %Board{
+      origin: {1,2},
+      size: {5,5},
+      alive_cells: MapSet.new([{1,2}, {1,6}, {4,3}, {5,3}, {4,4}]),
+      foreign_alive_cells: MapSet.new([{0,1}, {0,2}, {1,1}, {0,3}]) }
+
+    new_board = %{board | alive_cells: MapSet.new([{1,3}, {4,3}, {5,3}, {4,4}, {5,4}]), generation: 1}
+    assert next_board_state(board) == new_board
+  end
+
   test "generation is incremented by one" do
     board = %Board{generation: 5}
     new_board = %{board | generation: 6}
