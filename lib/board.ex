@@ -9,6 +9,17 @@ defmodule GameOfLife.Board do
 
   @neighbour_range -1..1
 
+  def update_foreign_area(%Board{} = board, bottom_left, top_right, new_foreign_alive_cells \\ %MapSet{}) do
+    updated_foreign_alive_cells = clean_foreign_area(board, bottom_left, top_right)
+    %{board | foreign_alive_cells: MapSet.union(new_foreign_alive_cells, updated_foreign_alive_cells)}
+  end
+
+  defp clean_foreign_area(%Board{} = board, bottom_left, top_right) do
+    board.foreign_alive_cells
+    |> Enum.filter(&(!within_area?(bottom_left, top_right, &1)))
+    |> MapSet.new
+  end
+
   def next_board_state(%Board{} = board) do
     # TODO This is a chapu. Try to find a better way.
     combined_board = %{board | alive_cells: MapSet.union(board.alive_cells, board.foreign_alive_cells)}
@@ -68,7 +79,11 @@ defmodule GameOfLife.Board do
       abs(x_current - x_candidate) <= 1 and abs(y_current - y_candidate) <= 1
   end
 
-  defp within_board?({size_x,size_y},{x,y}) do
-    x < size_x and y < size_y and x >= 0 and y >= 0
+  defp within_board?({size_x,size_y},cell) do
+    within_area?({0,0},{size_x - 1,size_y - 1},cell)
+  end
+
+  defp within_area?({left_x,bottom_y},{right_x,top_y},{x,y}) do
+    x <= right_x and y <= top_y and x >= left_x and y >= bottom_y
   end
 end
