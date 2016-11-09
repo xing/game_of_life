@@ -56,4 +56,27 @@ defmodule BoardTest do
     assert board.foreign_alive_cells == next_board_state(board).foreign_alive_cells
   end
 
+  test "update foreign area cleans area when no alive cells provided" do
+    board =  %Board{size: {5,5}, foreign_alive_cells: MapSet.new([{-1,-1}, {-1,0}, {0,-1}, {-1,4}])}
+    expected_board = %{board | foreign_alive_cells: MapSet.new([{-1,-1}, {0,-1}])}
+    bottom_left = {-1,0}
+    top_right = {-1,4}
+    assert expected_board == update_foreign_area(board, bottom_left, top_right, %MapSet{})
+  end
+
+  test "update foreign area adds new alive cells when additional alive cells are provided" do
+    board =  %Board{size: {5,5}, foreign_alive_cells: MapSet.new([{-1,-1}])}
+    expected_board = %{board | foreign_alive_cells: MapSet.new([{-1,1},{-1,2},{-1,-1}])}
+    bottom_left = {-1,0}
+    top_right = {-1,4}
+    assert expected_board == update_foreign_area(board, bottom_left, top_right, MapSet.new([{-1,1},{-1,2}]))
+  end
+
+  test "update foreign area replaces alive cells in the area provided" do
+    board =  %Board{size: {5,5}, foreign_alive_cells: MapSet.new([{-1,3}, {-1,-1}])}
+    expected_board = %{board | foreign_alive_cells: MapSet.new([{-1,1},{-1,2},{-1,-1}])}
+    bottom_left = {-1,0}
+    top_right = {-1,4}
+    assert expected_board == update_foreign_area(board, bottom_left, top_right, MapSet.new([{-1,1},{-1,2}]))
+  end
 end

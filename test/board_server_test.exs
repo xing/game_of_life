@@ -35,4 +35,18 @@ defmodule BoardServerTest do
     assert expected_board == result_board
   end
 
+  test "update foreign alive cells and get new board" do
+    board =  %Board{size: {5,5}, foreign_alive_cells: MapSet.new([{-1,3}, {-1,-1}])}
+    bottom_left = {-1,0}
+    top_right = {-1,4}
+    new_foreign_alive_cells = MapSet.new([{-1,1},{-1,2}])
+
+    {:ok, pid} = BoardServer.start_link(self(), [board: board])
+    BoardServer.update_foreign_area(pid, bottom_left, top_right, new_foreign_alive_cells)
+
+    expected_board = %{board | foreign_alive_cells: MapSet.new([{-1,1},{-1,2},{-1,-1}])}
+
+    {:ok, result_board} = BoardServer.current_board(pid)
+    assert expected_board == result_board
+  end
 end
