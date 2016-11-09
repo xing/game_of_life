@@ -9,9 +9,11 @@ defmodule GameOfLife do
       supervisor(GameOfLife.BoardManager, [])
     ]
 
-    if System.get_env("ROLE") == "master" do
-      children = [worker(GameOfLife.EventManager, []) | children]
-    end
+    children =
+      case System.get_env("ROLE") == "master" do
+        true -> [worker(GameOfLife.EventManager, []) | children]
+        false -> children
+      end
 
     opts = [strategy: :one_for_one, name: GameOfLife.Supervisor]
     Supervisor.start_link(children, opts)

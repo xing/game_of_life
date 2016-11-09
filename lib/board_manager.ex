@@ -15,8 +15,8 @@ defmodule GameOfLife.BoardManager do
     supervise([], strategy: :one_for_one)
   end
 
-  def start_children(supervisor_pid, {board_size, board_coords}) do
+  def start_children(supervisor_pid, {board_size, board_id}) do
     {:ok, board_pid} = Supervisor.start_child(supervisor_pid, worker(BoardServer, [board_size]))
-    {:ok, board_sync_pid} = Supervisor.start_child(supervisor_pid, worker(BoardSynchronizer, [[board_pid, board_coords]]))
+    {:ok, board_sync_pid} = Supervisor.start_child(supervisor_pid, worker(BoardSynchronizer, [{board_pid, board_id, board_size}]))
   end
 end
