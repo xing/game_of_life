@@ -29,4 +29,8 @@ defmodule GameOfLife.GridManager do
     {:ok, board_id, new_grid} = Grid.add_board(grid)
     {:reply, {:ok, {grid.board_size, board_id}}, new_grid}
   end
+
+  def handle_info(:tick, grid) do
+    {:noreply, grid}
+  end
 end

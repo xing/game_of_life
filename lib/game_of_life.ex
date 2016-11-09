@@ -5,14 +5,14 @@ defmodule GameOfLife do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
-    children = [
-      supervisor(GameOfLife.BoardManager, [])
-    ]
-
     children =
       case System.get_env("ROLE") == "master" do
-        true -> [worker(GameOfLife.EventManager, []) | children]
-        false -> children
+        true ->
+          [ worker(GameOfLife.EventManager, []),
+            worker(GameOfLife.GridManager, []),
+            worker(GameOfLife.Ticker, [GameOfLife.GridManager])]
+        false ->
+          [ supervisor(GameOfLife.BoardManager, []) ]
       end
 
     opts = [strategy: :one_for_one, name: GameOfLife.Supervisor]
