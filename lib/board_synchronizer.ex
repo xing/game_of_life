@@ -11,14 +11,6 @@ defmodule GameOfLife.BoardSynchronizer do
     GenServer.start_link(__MODULE__, initial)
   end
 
-  def neighbours(pid) do
-    GenEvent.call(pid, __MODULE__, :neighbours)
-  end
-
-  def add_neighbour(pid, {board_pid, orientation}) do
-    GenEvent.call(pid, __MODULE__, {:add_neighbour, {board_pid, orientation}})
-  end
-
   # Server
 
   def init({board_pid, board_id, board_size}) do
