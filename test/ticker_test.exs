@@ -4,7 +4,7 @@ defmodule GameOfLife.TickerTest do
 
   setup do
     owner = self()
-    {:ok, pid} = GameOfLife.Ticker.start_link(owner)
+    {:ok, pid} = GameOfLife.Ticker.start_link(owner, interval: 10)
     [ticker: pid]
   end
 
@@ -32,21 +32,21 @@ defmodule GameOfLife.TickerTest do
 
   test "receive tick message" do
     {:ok, :started} = GameOfLife.Ticker.start_ticker
-    assert_receive :tick, 501
+    assert_receive :tick
   end
 
   test "stop the ticker" do
     {:ok, :started} = GameOfLife.Ticker.start_ticker
-    assert_receive :tick, 501
+    assert_receive :tick
 
     {:ok, :stopped} = GameOfLife.Ticker.stop_ticker
     {:ok, %GameOfLife.Ticker{interval_ref: nil}} = GameOfLife.Ticker.get_state
-    refute_received :tick, 501
+    refute_received :tick
   end
 
   test "the default interval" do
     {:ok, state} = GameOfLife.Ticker.get_state
-    assert state.interval == 500
+    assert state.interval == 10
   end
 
   test "specifying interval via options", context do
