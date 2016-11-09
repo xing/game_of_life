@@ -14,17 +14,17 @@ defmodule GameOfLife.Board do
     %{board | foreign_alive_cells: MapSet.union(new_foreign_alive_cells, updated_foreign_alive_cells)}
   end
 
-  defp clean_foreign_area(%Board{} = board, bottom_left, top_right) do
-    board.foreign_alive_cells
-    |> Enum.filter(&(!within_area?(bottom_left, top_right, &1)))
-    |> MapSet.new
-  end
-
   def next_board_state(%Board{} = board) do
     # TODO This is a chapu. Try to find a better way.
     combined_board = %{board | alive_cells: MapSet.union(board.alive_cells, board.foreign_alive_cells)}
     new_alive_cells = MapSet.union(survivor_cells(combined_board), newborn_cells(combined_board))
     %{board | alive_cells: new_alive_cells, generation: board.generation + 1}
+  end
+
+  defp clean_foreign_area(%Board{} = board, bottom_left, top_right) do
+    board.foreign_alive_cells
+    |> Enum.filter(&(!within_area?(bottom_left, top_right, &1)))
+    |> MapSet.new
   end
 
   defp survivor_cells(%Board{} = board) do
