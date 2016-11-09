@@ -4,7 +4,7 @@ defmodule GameOfLife.BoardServer do
 
   defstruct board: %Board{}
 
-  def start_link(_owner, opts \\ []) do
+  def start_link(board_size, opts \\ []) do
     board = Keyword.get(opts, :board, %Board{})
     GenServer.start_link(__MODULE__, board)
   end

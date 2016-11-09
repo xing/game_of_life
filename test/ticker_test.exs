@@ -3,6 +3,7 @@ defmodule GameOfLife.TickerTest do
   doctest GameOfLife.Ticker
 
   setup do
+    GameOfLife.EventManager.start_link
     owner = self()
     {:ok, pid} = GameOfLife.Ticker.start_link(owner, interval: 10)
     [ticker: pid]

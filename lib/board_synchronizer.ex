@@ -2,7 +2,14 @@ defmodule GameOfLife.BoardSynchronizer do
   use GenEvent
   alias GameOfLife.Board
 
+  @default_size 4
   defstruct board_pid: nil, board_id: nil, board_size: nil
+
+  # Client
+
+  def start_link(initial) do
+    GenServer.start_link(__MODULE__, initial)
+  end
 
   # Server
 
