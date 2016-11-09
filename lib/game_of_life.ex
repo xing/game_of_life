@@ -6,8 +6,12 @@ defmodule GameOfLife do
     import Supervisor.Spec, warn: false
 
     children = [
-      worker(GameOfLife.EventManager, []),
+      supervisor(GameOfLife.BoardManager, [])
     ]
+
+    if Application.get_env(:game_of_life, :role) == :master do
+      children = List.insert_at(children, 0, worker(GameOfLife.EventManager, []))
+    end
 
     opts = [strategy: :one_for_one, name: GameOfLife.Supervisor]
     Supervisor.start_link(children, opts)

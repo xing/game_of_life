@@ -4,7 +4,7 @@ defmodule GameOfLife.BoardSynchronizerTest do
   setup do
      {:ok, pid} = GenEvent.start_link([])
      board_pid = self()
-     GenEvent.add_handler(pid, GameOfLife.BoardSynchronizer, board_pid)
+     GenEvent.add_handler(pid, GameOfLife.BoardSynchronizer, [board_pid, {1,1}])
      [sync_pid: pid, default_size: 4]
   end
 

@@ -7,9 +7,13 @@ defmodule GameOfLife.BoardSynchronizer do
 
   @default_size 4
 
-  defstruct board_pid: nil, neighbours: %{}
+  defstruct board_coord: nil, board_pid: nil, neighbours: %{}
 
   # Client
+
+  def start_link([board_pid, board_coord] = initial) do
+    GenServer.start_link(__MODULE__, initial)
+  end
 
   def neighbours(pid) do
     GenEvent.call(pid, __MODULE__, :neighbours)
@@ -21,11 +25,11 @@ defmodule GameOfLife.BoardSynchronizer do
 
   # Server
 
-  def init(board_pid) do
-    {:ok, %GameOfLife.BoardSynchronizer{board_pid: board_pid}}
+  def init([board_pid, board_coord]) do
+    {:ok, %GameOfLife.BoardSynchronizer{board_coord: board_coord, board_pid: board_pid}}
   end
 
-  def handle_event({:cells_update, cells, pid}, state) do
+  def handle_event({:cells_update, cells, pid, board_server_pid}, state) do
     orientation = state.neighbours[pid]
     updated_cells = map_cells_to_board(cells, orientation)
     area = get_area(orientation)
