@@ -10,10 +10,6 @@ defmodule GameOfLife.BoardServer do
     GenServer.start_link(__MODULE__, board)
   end
 
-  def load_pattern(pid, pattern_key) do
-    GenServer.call(pid, {:load_pattern, pattern_key})
-  end
-
   def next_board_state(pid) do
     GenServer.call(pid, :next_board_state)
   end
@@ -24,11 +20,6 @@ defmodule GameOfLife.BoardServer do
 
   def current_board(pid) do
     GenServer.call(pid, :current_board)
-  end
-
-  def handle_call({:load_pattern, pattern_key}, _from, board) do
-    alive_cells = PatternLoader.load(pattern_key, board.size)
-    %{board | alive_cells: alive_cells}
   end
 
   def handle_call(:next_board_state, _from, board) do

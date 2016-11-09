@@ -2,6 +2,7 @@ defmodule GameOfLife.Board do
   alias GameOfLife.Board, as: Board
   defstruct(
     generation: 0, # iteration number
+    origin: {0,0}, # this is the bottom left corner of the board
     size: {5,5}, # size of board {x,y}
     alive_cells: %MapSet{}, # set of tuples of alive cells e.g. [{1,1}, {5,2}].  Bottom left is 0,0
     foreign_alive_cells: %MapSet{} # set of tuples of alive cells
@@ -29,7 +30,7 @@ defmodule GameOfLife.Board do
 
   defp survivor_cells(%Board{} = board) do
     board.alive_cells
-    |> Enum.filter(&(within_board?(board.size, &1) and will_stay_alive?(board.alive_cells, &1)))
+    |> Enum.filter(&(within_board?(board.origin, board.size, &1) and will_stay_alive?(board.alive_cells, &1)))
     |> MapSet.new
   end
 
@@ -42,7 +43,7 @@ defmodule GameOfLife.Board do
 
   defp newborn_neighbour_cells(%Board{} = board, alive_cell) do
     neighbour_cells(alive_cell)
-    |> Enum.filter(&(!alive_cell?(board, &1) and within_board?(board.size,&1)))
+    |> Enum.filter(&(!alive_cell?(board, &1) and within_board?(board.origin,board.size,&1)))
   end
 
   defp alive_cell?(%Board{} = board, cell) do
@@ -79,8 +80,8 @@ defmodule GameOfLife.Board do
       abs(x_current - x_candidate) <= 1 and abs(y_current - y_candidate) <= 1
   end
 
-  defp within_board?({size_x,size_y},cell) do
-    within_area?({0,0},{size_x - 1,size_y - 1},cell)
+  defp within_board?({origin_x,origin_y} = origin,{size_x,size_y},cell) do
+    within_area?(origin,{origin_x + size_x - 1,origin_y + size_y - 1},cell)
   end
 
   defp within_area?({left_x,bottom_y},{right_x,top_y},{x,y}) do
