@@ -26,8 +26,7 @@ defmodule GameOfLife.GridManager do
   end
 
   def handle_call(:join, _from, grid) do
-    new_board = Grid.next_free_board(grid.boards)
-    updated_grid = %Grid{grid | boards: [new_board | grid.boards]}
-    {:reply, {:ok, {grid.board_size, new_board}}, updated_grid}
+    {:ok, board_id, new_grid} = Grid.add_board(grid)
+    {:reply, {:ok, {grid.board_size, board_id}}, new_grid}
   end
 end
