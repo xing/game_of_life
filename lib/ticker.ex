@@ -47,6 +47,7 @@ defmodule GameOfLife.Ticker do
       :started ->
         {:ok, _} = :timer.cancel(state.interval_ref)
         new_state = %{state | ticker_state: :stopped, interval_ref: nil}
+        GenEvent.notify(GameOfLife.EventManager, {:ticker_update, new_state})
         {:reply, {:ok, :stopped}, new_state}
       :stopped ->
         {:reply, {:error, :already_stopped }, state}
@@ -60,6 +61,7 @@ defmodule GameOfLife.Ticker do
       :stopped ->
         {:ok, interval_ref} = :timer.send_interval(state.interval, state.owner_pid, :tick)
         new_state = %{state | ticker_state: :started, interval_ref: interval_ref}
+        GenEvent.notify(GameOfLife.EventManager, {:ticker_update, new_state})
         {:reply, {:ok, :started}, new_state}
     end
   end
@@ -72,10 +74,11 @@ defmodule GameOfLife.Ticker do
     case ticker_status do
       :stopped ->
         new_state = %{state | interval: new_interval}
+        GenEvent.notify(GameOfLife.EventManager, {:ticker_update, new_state})
         {:reply, :ok, new_state}
       :started ->
         {:reply, {:error, :ticker_already_started}, state}
     end
   end
-  
+
 end
