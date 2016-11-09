@@ -46,7 +46,7 @@ defmodule GameOfLife.BoardSynchronizer do
 
   defp get_area("N"), do: [{0, @default_size}, {@default_size - 1, @default_size}]
   defp get_area("E"), do: [{@default_size, 0}, {@default_size, @default_size - 1}]
-  defp get_area("S"), do: [{0, -1}, {@default_size -1, -1}]
+  defp get_area("S"), do: [{0, -1}, {@default_size - 1, -1}]
   defp get_area("W"), do: [{-1, 0}, {-1, @default_size - 1}]
   defp get_area("NE"), do: [{@default_size, @default_size}, {@default_size, @default_size}]
   defp get_area("SE"), do: [{@default_size, -1}, {@default_size, -1}]
