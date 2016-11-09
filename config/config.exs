@@ -28,6 +28,3 @@ use Mix.Config
 # here (which is why it is important to import them last).
 #
 #     import_config "#{Mix.env}.exs"
-# to set this node as master please change the role to master that way the
-# event manager will start when join the the grid
-config :game_of_life, role: :slave

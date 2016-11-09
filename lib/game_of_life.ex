@@ -9,8 +9,8 @@ defmodule GameOfLife do
       supervisor(GameOfLife.BoardManager, [])
     ]
 
-    if Application.get_env(:game_of_life, :role) == :master do
-      children = List.insert_at(children, 0, worker(GameOfLife.EventManager, []))
+    if System.get_env("ROLE") == "master" do
+      children = [worker(GameOfLife.EventManager, []) | children]
     end
 
     opts = [strategy: :one_for_one, name: GameOfLife.Supervisor]
