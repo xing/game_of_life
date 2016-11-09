@@ -44,9 +44,11 @@ defmodule GameOfLife.TickerTest do
     refute_received :tick
   end
 
-  test "the default interval" do
+  test "the default interval", context do
+    GenServer.stop(context.ticker)
+    {:ok, _} = GameOfLife.Ticker.start_link(self)
     {:ok, state} = GameOfLife.Ticker.get_state
-    assert state.interval == 10
+    assert state.interval == 500
   end
 
   test "specifying interval via options", context do
