@@ -41,9 +41,24 @@ defmodule GameOfLife.PatternLoader do
     .............*.*.....................
     ..............*......................
     """
-    load(pattern, {nil, size_y})
-    |> Enum.map(fn({x,y}) ->  {x + origin_x, y + origin_y } end)
-    |> Enum.filter(fn({x,y}) -> (x - origin_x) < size_x && (y - origin_y) < size_y end)
-    |> MapSet.new
+    load_predefined_pattern(pattern, {size_x, size_y}, {origin_x, origin_y})
+  end
+
+  def load_spaceship({origin_x, origin_y}, size \\ {5, 4}) do
+    {size_x, size_y} = size
+    pattern = """
+    .*..*
+    *....
+    *...*
+    ****.
+    """
+    load_predefined_pattern(pattern, {size_x, size_y}, {origin_x, origin_y})
+  end
+
+  def load_predefined_pattern(pattern, {size_x, size_y}, {origin_x, origin_y}) do
+    load(pattern, {size_x, size_y})
+      |> Enum.map(fn({x,y}) ->  {x + origin_x, y + origin_y } end)
+      |> Enum.filter(fn({x,y}) -> (x - origin_x) < size_x && (y - origin_y) < size_y end)
+      |> MapSet.new
   end
 end
