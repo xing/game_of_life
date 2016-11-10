@@ -36,14 +36,9 @@ defmodule GameOfLife.Board do
 
   defp newborn_cells(%Board{} = board) do
     board.alive_cells
-    |> Enum.flat_map(&(newborn_neighbour_cells(board, &1)))
-    |> Enum.filter(&(will_become_alive?(board.alive_cells, &1)))
+    |> Enum.flat_map(&(neighbour_cells(&1))) # getting neighbours of alive cells
+    |> Enum.filter(&(will_become_alive?(board, &1)))
     |> MapSet.new
-  end
-
-  defp newborn_neighbour_cells(%Board{} = board, alive_cell) do
-    neighbour_cells(alive_cell)
-    |> Enum.filter(&(!alive_cell?(board, &1) and within_board?(board.origin,board.size,&1)))
   end
 
   defp alive_cell?(%Board{} = board, cell) do
@@ -66,9 +61,13 @@ defmodule GameOfLife.Board do
     alive_neighbours == 2 or alive_neighbours == 3
   end
 
-  defp will_become_alive?(board_cells, current_cell) do
-    alive_neighbours = count_alive_neighbours(board_cells, current_cell)
-    alive_neighbours == 3
+  defp will_become_alive?(board, current_cell) do
+    if (!alive_cell?(board, current_cell) and within_board?(board.origin, board.size, current_cell)) do
+      alive_neighbours = count_alive_neighbours(board.alive_cells, current_cell)
+      alive_neighbours == 3
+    else
+      false
+    end
   end
 
   defp count_alive_neighbours(board_cells, current_cell) do
