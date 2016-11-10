@@ -90,4 +90,5 @@ defmodule BoardTest do
     top_right = {-1,4}
     assert expected_board == update_foreign_area(board, bottom_left, top_right, MapSet.new([{-1,1},{-1,2}]))
   end
+
 end

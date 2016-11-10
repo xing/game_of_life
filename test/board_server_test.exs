@@ -4,9 +4,15 @@ defmodule BoardServerTest do
   use ExUnit.Case
 
   test "gets new board state" do
-    {:ok, pid} = BoardServer.start_link(self())
-    {_, board} = BoardServer.next_board_state(pid)
+    {:ok, pid} = BoardServer.start_link({0,0}, {20,20})
+    {:ok, board} = BoardServer.next_board_state(pid)
     assert 1 == board.generation
+  end
+
+  test "gets a random board state" do
+    {:ok, pid} = BoardServer.start_link({0,0}, {1,1}, [density: 100])
+    {:ok, board} = BoardServer.current_board(pid)
+    assert %Board{origin: {0,0}, size: {1,1}, alive_cells: MapSet.new([{0,0}])} == board
   end
 
   test "gets new board state from defined initial board" do
@@ -14,7 +20,7 @@ defmodule BoardServerTest do
                 alive_cells: MapSet.new([{0,0}, {0,4}, {3,1}, {4,1}, {3,2}]),
                 foreign_alive_cells: MapSet.new([{-1,-1}, {-1,0}, {0,-1}, {-1,1}])
               }
-    {:ok, pid} = BoardServer.start_link(self(), [board: board])
+    {:ok, pid} = BoardServer.start_link({0,0}, {100,100}, [board: board])
     {_, result_board} = BoardServer.next_board_state(pid)
 
     expected_board = %{board | alive_cells: MapSet.new([{0,1}, {3,1}, {4,1}, {3,2}, {4,2}]), generation: 1}
@@ -27,7 +33,7 @@ defmodule BoardServerTest do
               foreign_alive_cells: MapSet.new([{-1,-1}, {-1,0}, {0,-1}, {-1,1}])
             }
 
-    {:ok, pid} = BoardServer.start_link(self(), [board: board])
+    {:ok, pid} = BoardServer.start_link({0,0}, {100,100},  [board: board])
     BoardServer.next_board_state(pid)
     {_, result_board} = BoardServer.next_board_state(pid)
 
@@ -41,7 +47,7 @@ defmodule BoardServerTest do
     top_right = {-1,4}
     new_foreign_alive_cells = MapSet.new([{-1,1},{-1,2}])
 
-    {:ok, pid} = BoardServer.start_link(self(), [board: board])
+    {:ok, pid} = BoardServer.start_link({0,0}, {100,100}, [board: board])
     BoardServer.update_foreign_area(pid, bottom_left, top_right, new_foreign_alive_cells)
 
     expected_board = %{board | foreign_alive_cells: MapSet.new([{-1,1},{-1,2},{-1,-1}])}
