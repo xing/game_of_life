@@ -5,7 +5,8 @@ defmodule GameOfLife.Board do
     origin: {0,0}, # this is the bottom left corner of the board
     size: {5,5}, # size of board {x,y}
     alive_cells: %MapSet{}, # set of tuples of alive cells e.g. [{1,1}, {5,2}].  Bottom left is 0,0
-    foreign_alive_cells: %MapSet{} # set of tuples of alive cells
+    foreign_alive_cells: %MapSet{}, # set of tuples of alive cells
+    cell_attributes: %{}
   )
 
   @neigbour_vectors [{-1,-1}, {-1,0}, {-1,1}, {0,-1}, {0,1}, {1,-1}, {1,0}, {1,1}]
@@ -19,7 +20,21 @@ defmodule GameOfLife.Board do
     # TODO This is a chapu. Try to find a better way.
     combined_board = %{board | alive_cells: MapSet.union(board.alive_cells, board.foreign_alive_cells)}
     new_alive_cells = MapSet.union(survivor_cells(combined_board), newborn_cells(combined_board))
-    %{board | alive_cells: new_alive_cells, generation: board.generation + 1}
+    new_cell_attributes = update_cell_attributes(board.cell_attributes, new_alive_cells)
+    %{board | alive_cells: new_alive_cells, generation: board.generation + 1, cell_attributes: new_cell_attributes}
+  end
+
+  defp update_cell_attributes(old_attributes, new_alive_cells) do
+    new_alive_cells
+    |> Enum.reduce(%{}, &(Map.put(&2,&1,new_attribute(old_attributes,&1))))
+  end
+
+  defp new_attribute(old_attributes, cell) do
+    if Map.has_key?(old_attributes, cell) do
+      %{ age: Map.get(old_attributes, cell).age + 1 }
+    else
+      %{ age: 1 }
+    end
   end
 
   defp clean_foreign_area(%Board{} = board, bottom_left, top_right) do
@@ -71,11 +86,6 @@ defmodule GameOfLife.Board do
   defp count_alive_neighbours(board_cells, current_cell) do
     neighbour_cells(current_cell)
     |> Enum.count(&(MapSet.member?(board_cells, &1)))
-  end
-
-  defp alive_neighbour?({x_current,y_current} = current_cell, {x_candidate, y_candidate} = candidate) do
-    current_cell != candidate and
-      abs(x_current - x_candidate) <= 1 and abs(y_current - y_candidate) <= 1
   end
 
   defp within_board?({origin_x,origin_y} = origin,{size_x,size_y},cell) do

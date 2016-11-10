@@ -28,7 +28,10 @@ defmodule BoardServerTest do
     {:ok, pid} = BoardServer.start_link({0,0}, {100,100}, [board: board])
     {_, result_board} = BoardServer.next_board_state(pid)
 
-    expected_board = %{board | alive_cells: MapSet.new([{0,1}, {3,1}, {4,1}, {3,2}, {4,2}]), generation: 1}
+    expected_board = %{board | alive_cells: MapSet.new([{0,1}, {3,1}, {4,1}, {3,2}, {4,2}]),
+                              generation: 1, cell_attributes: %{{0, 1} => %{age: 1},
+                               {3, 1} => %{age: 1}, {3, 2} => %{age: 1},
+                               {4, 1} => %{age: 1}, {4, 2} => %{age: 1}}}
     assert expected_board == result_board
   end
 
@@ -42,7 +45,10 @@ defmodule BoardServerTest do
     BoardServer.next_board_state(pid)
     {_, result_board} = BoardServer.next_board_state(pid)
 
-    expected_board = %{board | alive_cells: MapSet.new([{3,1}, {4,1}, {3,2}, {4,2}, {0,1}]), generation: 2}
+    expected_board = %{board | alive_cells: MapSet.new([{3,1}, {4,1}, {3,2}, {4,2}, {0,1}]),
+                               generation: 2, cell_attributes: %{{0, 1} => %{age: 2},
+                                {3, 1} => %{age: 2}, {3, 2} => %{age: 2},
+                                 {4, 1} => %{age: 2}, {4, 2} => %{age: 2}}}
     assert expected_board == result_board
   end
 
