@@ -4,7 +4,6 @@ defmodule GameOfLife.BoardManager do
   use Supervisor
 
   def start_link do
-    {:ok, pid} = GameOfLife.GridManager.start_link
     {:ok, response} = GameOfLife.GridManager.request_join
     {:ok, supervisor_pid} = Supervisor.start_link(__MODULE__, [])
     start_children(supervisor_pid, response)
