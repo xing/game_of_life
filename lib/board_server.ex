@@ -40,8 +40,8 @@ defmodule GameOfLife.BoardServer do
 
   defp default_board(origin, {size_x, size_y} = board_size, density) do
     #%Board{origin: origin, size: board_size, alive_cells: PatternLoader.load_random(origin, board_size, density)}
-        %Board{origin: origin, size: board_size, alive_cells: PatternLoader.load_glider(origin, board_size)}
-    #    %Board{origin: origin, size: board_size, alive_cells: PatternLoader.load_spaceship(origin, board_size)}
+    #    %Board{origin: origin, size: board_size, alive_cells: PatternLoader.load_glider(origin, board_size)}
+        %Board{origin: origin, size: board_size, alive_cells: PatternLoader.load_spaceship(origin, board_size)}
   end
 
 end
