@@ -4,7 +4,7 @@ defmodule BoardServerTest do
   use ExUnit.Case
 
   test "gets new board state" do
-    {:ok, pid} = BoardServer.start_link({0,0}, {20,20})
+    {:ok, pid} = BoardServer.start_link({0,0}, {100,100})
     {:ok, board} = BoardServer.next_board_state(pid)
     assert 1 == board.generation
   end
