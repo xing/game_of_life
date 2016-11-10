@@ -10,7 +10,7 @@ defmodule GameOfLife.GridTest do
 
       assert {0, 0} == board_id
       assert [{0, 0}] == grid.boards
-      assert %{{0,0} => nil} == grid.board_server_pids
+      assert %{} == grid.board_server_pids
     end
 
     test "returns {10, 0]} on second iteration" do
@@ -20,14 +20,14 @@ defmodule GameOfLife.GridTest do
 
       assert {10, 0} == board_id
       assert [{10, 0}, {0, 0}] == grid.boards
-      assert %{{10,0} => nil, {0,0} => nil} == grid.board_server_pids
+      assert %{} == grid.board_server_pids
     end
 
     test "update board server pids" do
       grid = %Grid{board_size: {10, 20}}
       {:ok, board_id, grid} = Grid.add_board(grid)
 
-      {:ok, board_id, grid} = Grid.add_board(grid, board_id, "hello")
+      {:ok, _, grid} = Grid.set_board_server_pid(grid, board_id, "hello")
 
       assert %{{0,0} => "hello"} == grid.board_server_pids
     end

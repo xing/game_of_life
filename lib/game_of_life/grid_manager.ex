@@ -35,7 +35,7 @@ defmodule GameOfLife.GridManager do
   end
 
   def handle_cast({:confirm_join, board_server_pid, board_id}, grid) do
-    {:ok, board_id, new_grid} = Grid.add_board(grid, board_id, board_server_pid)
+    {:ok, _, new_grid} = Grid.set_board_server_pid(grid, board_id, board_server_pid)
     {:noreply, new_grid}
   end
 
