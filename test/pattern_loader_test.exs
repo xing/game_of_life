@@ -38,4 +38,24 @@ defmodule PatternLoaderTest do
     assert cells == expected_cells
   end
 
+
+  test "randomize a degenerate board, full" do
+    cells = PatternLoader.load_random({0,0}, {1,1}, 100)
+    assert cells == MapSet.new([{0,0}])
+  end
+
+  test "randomize a degenerate board, empty" do
+    cells = PatternLoader.load_random({0,0}, {1,1}, 0)
+    assert cells == MapSet.new
+  end
+
+  test "randomize a small board" do
+    cells = PatternLoader.load_random({0,0}, {2,2}, 100)
+    assert cells == MapSet.new([{0,0},{0,1},{1,0},{1,1}])
+  end
+
+  test "randomize a small board, non-default origin" do
+    cells = PatternLoader.load_random({100,100}, {2,2}, 100)
+    assert cells == MapSet.new([{100,100},{100,101},{101,100},{101,101}])
+  end
 end

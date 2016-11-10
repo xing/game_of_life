@@ -5,8 +5,9 @@ defmodule GameOfLife.BoardServer do
 
   defstruct board: %Board{}
 
-  def start_link(board_size, opts \\ []) do
-    board = Keyword.get(opts, :board, %Board{})
+  def start_link(origin, board_size, opts \\ []) do
+    density = Keyword.get(opts, :density, 50)
+    board = Keyword.get(opts, :board, default_board(origin, board_size, density))
     GenServer.start_link(__MODULE__, board)
   end
 
@@ -34,6 +35,10 @@ defmodule GameOfLife.BoardServer do
 
   def handle_call(:current_board, _from, board) do
     {:reply, {:ok, board}, board}
+  end
+
+  defp default_board(origin, board_size, density) do
+    %Board{origin: origin, size: board_size, alive_cells: PatternLoader.load_random(origin, board_size, density)}
   end
 
 end
