@@ -2,7 +2,7 @@ defmodule GameOfLife.GridManager do
   use GenServer
   alias GameOfLife.Grid
 
-  @default_board_size {60, 30}
+  @default_board_size {95, 50}
 
   ## Client API
 
