@@ -19,10 +19,10 @@ defmodule GameOfLife.Ticker do
 
   @default_interval_ms 500
 
-  defstruct ticker_state: :stopped, owner_pid: nil, interval: nil, interval_ref: nil
+  defstruct ticker_state: :stopped, interval: nil
 
-  def start_link(owner, opts \\ []) do
-    init = %GameOfLife.Ticker{owner_pid: owner, interval: (opts[:interval] || @default_interval_ms)}
+  def start_link(opts \\ []) do
+    init = %GameOfLife.Ticker{interval: (opts[:interval] || @default_interval_ms)}
     GenServer.start_link(__MODULE__, init, [name: __MODULE__])
   end
 
@@ -45,8 +45,7 @@ defmodule GameOfLife.Ticker do
   def handle_call(:stop, _from, %GameOfLife.Ticker{ticker_state: ticker_status} = state) do
     case ticker_status do
       :started ->
-        {:ok, _} = :timer.cancel(state.interval_ref)
-        new_state = %{state | ticker_state: :stopped, interval_ref: nil}
+        new_state = %{state | ticker_state: :stopped}
         GenEvent.notify(GameOfLife.EventManager, {:ticker_update, new_state})
         {:reply, {:ok, :stopped}, new_state}
       :stopped ->
@@ -59,8 +58,7 @@ defmodule GameOfLife.Ticker do
       :started ->
         {:reply, {:error, :ticker_already_started}, state}
       :stopped ->
-        {:ok, interval_ref} = :timer.send_interval(state.interval, state.owner_pid, :tick)
-        new_state = %{state | ticker_state: :started, interval_ref: interval_ref}
+        new_state = %{state | ticker_state: :started}
         GenEvent.notify(GameOfLife.EventManager, {:ticker_update, new_state})
         {:reply, {:ok, :started}, new_state}
     end
@@ -70,15 +68,10 @@ defmodule GameOfLife.Ticker do
     {:reply, {:ok, state}, state}
   end
 
-  def handle_call({:set_interval, new_interval}, _from, %GameOfLife.Ticker{ticker_state: ticker_status} = state) do
-    case ticker_status do
-      :stopped ->
-        new_state = %{state | interval: new_interval}
-        GenEvent.notify(GameOfLife.EventManager, {:ticker_update, new_state})
-        {:reply, :ok, new_state}
-      :started ->
-        {:reply, {:error, :ticker_already_started}, state}
-    end
+  def handle_call({:set_interval, new_interval}, _from, state) do
+    new_state = %{state | interval: new_interval}
+    GenEvent.notify(GameOfLife.EventManager, {:ticker_update, new_state})
+    {:reply, :ok, new_state}
   end
 
 end
