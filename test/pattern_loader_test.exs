@@ -38,6 +38,11 @@ defmodule PatternLoaderTest do
     assert cells == expected_cells
   end
 
+  test "loads a glider with right coordinates" do
+    result = PatternLoader.load_glider({10,10})
+    assert {11,12} in Enum.sort result
+  end
+
 
   test "randomize a degenerate board, full" do
     cells = PatternLoader.load_random({0,0}, {1,1}, 100)
