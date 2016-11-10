@@ -3,6 +3,11 @@ defmodule BoardServerTest do
   alias GameOfLife.BoardServer, as: BoardServer
   use ExUnit.Case
 
+  setup do
+    GameOfLife.EventManager.start_link
+    :ok
+  end
+
   test "gets new board state" do
     {:ok, pid} = BoardServer.start_link({0,0}, {100,100})
     {:ok, board} = BoardServer.next_board_state(pid)
