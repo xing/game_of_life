@@ -32,7 +32,8 @@ defmodule BoardTest do
 
   test "get next state of board" do
     board = %Board{size: {5,5}, foreign_alive_cells: MapSet.new([{-1,-1}, {-1,0}, {0,-1}])}
-    expected_board = %{board | alive_cells: MapSet.new([{0,0}]), generation: 1}
+    expected_board = %{board | alive_cells: MapSet.new([{0,0}]),
+                              generation: 1, cell_attributes: %{{0, 0} => %{age: 1}}}
     assert next_board_state(board) == expected_board
   end
 
@@ -41,7 +42,32 @@ defmodule BoardTest do
       alive_cells: MapSet.new([{0,0}, {0,4}, {3,1}, {4,1}, {3,2}]),
       foreign_alive_cells: MapSet.new([{-1,-1}, {-1,0}, {0,-1}, {-1,1}]) }
 
-    new_board = %{board | alive_cells: MapSet.new([{0,1}, {3,1}, {4,1}, {3,2}, {4,2}]), generation: 1}
+    new_board = %{board | alive_cells: MapSet.new([{0,1}, {3,1}, {4,1}, {3,2}, {4,2}]),
+                          generation: 1, cell_attributes: %{{0, 1} => %{age: 1},
+                          {3, 1} => %{age: 1}, {3, 2} => %{age: 1},
+                           {4, 1} => %{age: 1}, {4, 2} => %{age: 1}}}
+    assert next_board_state(board) == new_board
+  end
+
+  test "get new state having defined cell attributes" do
+    old_attributes = %{ {0,0} => %{ age: 1 },
+                        {0,4} => %{ age: 7 },
+                        {3,1} => %{ age: 2 },
+                        {4,1} => %{ age: 1 },
+                        {3,2} => %{ age: 4 } }
+
+    board = %Board{size: {5,5},
+      alive_cells: MapSet.new([{0,0}, {0,4}, {3,1}, {4,1}, {3,2}]),
+      foreign_alive_cells: MapSet.new([{-1,-1}, {-1,0}, {0,-1}, {-1,1}]),
+      cell_attributes: old_attributes}
+
+    new_board = %{board | alive_cells: MapSet.new([{0,1}, {3,1}, {4,1}, {3,2}, {4,2}]),
+                          generation: 1,
+                          cell_attributes: %{{0,1} => %{age: 1},
+                                             {3,1} => %{age: 3},
+                                             {3,2} => %{age: 5},
+                                             {4,1} => %{age: 2},
+                                             {4,2} => %{age: 1}}}
     assert next_board_state(board) == new_board
   end
 
@@ -52,7 +78,10 @@ defmodule BoardTest do
       alive_cells: MapSet.new([{1,2}, {1,6}, {4,3}, {5,3}, {4,4}]),
       foreign_alive_cells: MapSet.new([{0,1}, {0,2}, {1,1}, {0,3}]) }
 
-    new_board = %{board | alive_cells: MapSet.new([{1,3}, {4,3}, {5,3}, {4,4}, {5,4}]), generation: 1}
+    new_board = %{board | alive_cells: MapSet.new([{1,3}, {4,3}, {5,3}, {4,4}, {5,4}]),
+                          generation: 1, cell_attributes: %{{1, 3} => %{age: 1},
+                           {4, 3} => %{age: 1}, {4, 4} => %{age: 1},
+                           {5, 3} => %{age: 1}, {5, 4} => %{age: 1}}}
     assert next_board_state(board) == new_board
   end
 
