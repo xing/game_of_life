@@ -15,8 +15,12 @@ defmodule GameOfLife.GridManager do
     GenServer.call(__MODULE__, :get_state)
   end
 
-  def join do
-    GenServer.call(__MODULE__, :join)
+  def request_join do
+    GenServer.call(__MODULE__, :request_join)
+  end
+
+  def confirm_join(board_server_pid, board_id) do
+    GenServer.cast(__MODULE__, {:confirm_join, board_server_pid, board_id})
   end
 
   ## Server Callbacks
@@ -25,9 +29,14 @@ defmodule GameOfLife.GridManager do
     {:reply, {:ok, grid}, grid}
   end
 
-  def handle_call(:join, _from, grid) do
+  def handle_call(:request_join, _from, grid) do
     {:ok, board_id, new_grid} = Grid.add_board(grid)
     {:reply, {:ok, {grid.board_size, board_id}}, new_grid}
+  end
+
+  def handle_cast({:confirm_join, board_server_pid, board_id}, grid) do
+    {:ok, _, new_grid} = Grid.set_board_server_pid(grid, board_id, board_server_pid)
+    {:noreply, new_grid}
   end
 
   def handle_info(:tick, grid) do

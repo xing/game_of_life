@@ -6,14 +6,11 @@ defmodule GameOfLife do
     import Supervisor.Spec, warn: false
 
     children =
-      case System.get_env("ROLE") == "master" do
-        true ->
           [ worker(GameOfLife.EventManager, []),
             worker(GameOfLife.GridManager, []),
-            worker(GameOfLife.Ticker, [GameOfLife.GridManager])]
-        false ->
-          [ supervisor(GameOfLife.BoardManager, []) ]
-      end
+            worker(GameOfLife.Ticker, [GameOfLife.GridManager]),
+            supervisor(GameOfLife.BoardManager, [], [id: :a]),
+            supervisor(GameOfLife.BoardManager, [], [id: :b]) ]
 
     opts = [strategy: :one_for_one, name: GameOfLife.Supervisor]
     Supervisor.start_link(children, opts)
