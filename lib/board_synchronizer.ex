@@ -1,6 +1,6 @@
 defmodule GameOfLife.BoardSynchronizer do
   use GenEvent
-  alias GameOfLife.Board
+  alias GameOfLife.BoardServer
 
   @default_size 4
   defstruct board_pid: nil, board_id: nil, board_size: nil
@@ -17,13 +17,31 @@ defmodule GameOfLife.BoardSynchronizer do
     {:ok, %__MODULE__{board_pid: board_pid, board_id: board_id, board_size: board_size}}
   end
 
-  def handle_event({:cells_update, cells}, state) do
+  def handle_event({:cells_update, cells, other_board_id, other_board_size}, state) do
     overlapping_cells = Enum.filter(cells, &overlapping_cell?(&1, state.board_id, state.board_size))
-    # TODO: Board.update_foreign_area(state.board_pid, overlapping_cells)
+    {bottom_left, top_right} = overlapping_area(
+      board_area_with_margin(state.board_id, state.board_size),
+      board_area(other_board_id, other_board_size))
+
+    BoardServer.update_foreign_area(state.board_pid, bottom_left, top_right, overlapping_cells)
     {:ok, state}
   end
 
   def overlapping_cell?({x, y}, {bid_x, bid_y}, {w, h}) do
     (x in (bid_x - 1)..(bid_x + w)) and (y in (bid_y - 1)..(bid_y + h))
   end
+
+  def board_area({x, y}, {w,h}), do: {{x, y}, {x + w - 1, y + h - 1}}
+
+  def board_area_with_margin({x, y}, {w,h}), do: {{x - 1, y - 1}, {x + w, y + h}}
+
+  def overlapping_area({{ax1, ay1}, {ax2, ay2}}, {{bx1, by1}, {bx2, by2}}) do
+    area = {{max(ax1, bx1), max(ay1, by1)}, {min(ax2, bx2), min(ay2, by2)}}
+    case valid_area?(area) do
+       true -> area
+       false -> nil
+    end
+  end
+
+  def valid_area?({{x1, y1}, {x2, y2}}), do: x1 <= x2 and y1 <= y2
 end
