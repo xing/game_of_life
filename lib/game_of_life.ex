@@ -12,7 +12,8 @@ defmodule GameOfLife do
             worker(GameOfLife.GridManager, []),
             worker(GameOfLife.Ticker, [GameOfLife.GridManager])]
         false ->
-          [ supervisor(GameOfLife.BoardManager, []) ]
+          [ supervisor(GameOfLife.BoardManager, [], [id: :a]),
+            supervisor(GameOfLife.BoardManager, [], [id: :b]) ]
       end
 
     opts = [strategy: :one_for_one, name: GameOfLife.Supervisor]
