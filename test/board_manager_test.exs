@@ -2,6 +2,7 @@ defmodule GameOfLife.BoardManagerTest do
   use ExUnit.Case, async: true
 
     setup do
+      GameOfLife.EventManager.start_link
       GameOfLife.GridManager.start_link
       :ok
     end
