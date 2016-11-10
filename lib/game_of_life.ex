@@ -8,7 +8,7 @@ defmodule GameOfLife do
     children =
           [ worker(GameOfLife.EventManager, []),
             worker(GameOfLife.GridManager, []),
-            worker(GameOfLife.Ticker, [GameOfLife.GridManager]),
+            worker(GameOfLife.Ticker, []),
             supervisor(GameOfLife.BoardManager, [], [id: :a]),
             supervisor(GameOfLife.BoardManager, [], [id: :b]) ]
 
