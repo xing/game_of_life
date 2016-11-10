@@ -23,6 +23,25 @@ defmodule GameOfLife.GridTest do
       assert %{} == grid.board_server_pids
     end
 
+    test "returns multiple rows" do
+      grid = %Grid{board_size: {10, 20}}
+
+      {:ok, _board_id, grid} = Grid.add_board(grid)
+      {:ok, _board_id, grid} = Grid.add_board(grid)
+      {:ok, _board_id, grid} = Grid.add_board(grid)
+      {:ok, _board_id, grid} = Grid.add_board(grid)
+      {:ok, _board_id, grid} = Grid.add_board(grid)
+      {:ok, _board_id, grid} = Grid.add_board(grid)
+      {:ok, _board_id, grid} = Grid.add_board(grid)
+      {:ok, _board_id, grid} = Grid.add_board(grid)
+      {:ok, _board_id, grid} = Grid.add_board(grid)
+
+      assert [
+        {0,0}, {10,0}, {20,0},
+        {0,20}, {10, 20}, {20, 20},
+        {0, 40}, {10, 40}, {20,40}] == Enum.reverse(grid.boards)
+    end
+
     test "update board server pids" do
       grid = %Grid{board_size: {10, 20}}
       {:ok, board_id, grid} = Grid.add_board(grid)

@@ -18,12 +18,14 @@ defmodule GameOfLife.BoardSynchronizer do
   end
 
   def handle_event({:board_update, neighbour_board}, state) do
-    overlapping_cells = Enum.filter(neighbour_board.alive_cells, &overlapping_cell?(&1, state.board_id, state.board_size))
-    {bottom_left, top_right} = overlapping_area(
-      board_area_with_margin(state.board_id, state.board_size),
-      board_area(neighbour_board.origin, neighbour_board.size))
+    if neighbour_board.origin != state.board_id do
+      overlapping_cells = Enum.filter(neighbour_board.alive_cells, &overlapping_cell?(&1, state.board_id, state.board_size))
+      {bottom_left, top_right} = overlapping_area(
+        board_area_with_margin(state.board_id, state.board_size),
+        board_area(neighbour_board.origin, neighbour_board.size))
 
-    BoardServer.update_foreign_area(state.board_pid, bottom_left, top_right, MapSet.new(overlapping_cells))
+      BoardServer.update_foreign_area(state.board_pid, bottom_left, top_right, MapSet.new(overlapping_cells))
+    end
     {:ok, state}
   end
 
