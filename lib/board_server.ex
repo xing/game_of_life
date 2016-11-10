@@ -25,7 +25,7 @@ defmodule GameOfLife.BoardServer do
 
   def handle_call(:next_board_state, _from, board) do
     updated_board = Board.next_board_state(board)
-    GenEvent.notify(GameOfLife.EventManager, {:board_updated, updated_board})
+    GenEvent.notify(GameOfLife.EventManager, {:board_update, updated_board})
     {:reply, {:ok, updated_board}, updated_board}
   end
 

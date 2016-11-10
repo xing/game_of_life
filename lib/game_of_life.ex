@@ -13,7 +13,9 @@ defmodule GameOfLife do
             supervisor(GameOfLife.BoardManager, [], [id: :b]) ]
 
     opts = [strategy: :one_for_one, name: GameOfLife.Supervisor]
-    Supervisor.start_link(children, opts)
+    start_status = Supervisor.start_link(children, opts)
+    spawn(fn -> GameOfLife.Runner.run end)
+    start_status
   end
 
   @spec next_board_state(Board) :: Board
