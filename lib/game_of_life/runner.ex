@@ -11,7 +11,6 @@ defmodule GameOfLife.Runner do
     Map.values(pids)
     |> Enum.map(fn pid ->
         {:ok, _ } = BoardServer.next_board_state(pid)
-        {:ok, board} = BoardServer.current_board(pid)
       end)
 
     {:ok, %Ticker{interval: interval}} = Ticker.get_state
