@@ -20,13 +20,13 @@ defmodule GameOfLife.Board do
     # TODO This is a chapu. Try to find a better way.
     combined_board = %{board | alive_cells: MapSet.union(board.alive_cells, board.foreign_alive_cells)}
     new_alive_cells = MapSet.union(survivor_cells(combined_board), newborn_cells(combined_board))
-    new_cell_attributes = update_cell_attributes(board.cell_attributes, new_alive_cells)
+    new_cell_attributes = update_cell_attributes(board, new_alive_cells)
     %{board | alive_cells: new_alive_cells, generation: board.generation + 1, cell_attributes: new_cell_attributes}
   end
 
-  defp update_cell_attributes(old_attributes, new_alive_cells) do
+  defp update_cell_attributes(%Board{} = board, new_alive_cells) do
     new_alive_cells
-    |> Enum.reduce(%{}, &(Map.put(&2,&1,new_attribute(old_attributes,&1))))
+    |> Enum.reduce(%{}, &(Map.put(&2,&1,new_attribute(board.cell_attributes,&1))))
   end
 
   defp new_attribute(old_attributes, cell) do

@@ -28,8 +28,7 @@ defmodule GameOfLife.PatternLoader do
     |> Enum.map(fn({_, x_coord}) -> {x_coord, y_coord} end)
   end
 
-  def load_glider({origin_x, origin_y}, size \\ {36, 9}) do
-    {size_x, size_y} = size
+  def load_pattern(:glider, {origin_x, origin_y}, {size_x, size_y}) do
     pattern = """
     ..........................*..........
     .......................****....*.....
@@ -44,8 +43,7 @@ defmodule GameOfLife.PatternLoader do
     load_predefined_pattern(pattern, {size_x, size_y}, {origin_x, origin_y})
   end
 
-  def load_spaceship({origin_x, origin_y}, size \\ {5, 4}) do
-    {size_x, size_y} = size
+  def load_pattern(:space_ship, {origin_x, origin_y}, {size_x, size_y}) do
     pattern = """
     .*..*
     *....
@@ -55,7 +53,40 @@ defmodule GameOfLife.PatternLoader do
     load_predefined_pattern(pattern, {size_x, size_y}, {origin_x, origin_y})
   end
 
-  def load_predefined_pattern(pattern, {size_x, size_y}, {origin_x, origin_y}) do
+  def load_pattern(:big_x, {origin_x, origin_y}, size) do
+    {size_x, size_y} = size
+    Enum.flat_map(0..size_x-1, fn(offset_x) ->
+      Enum.map(0..size_y-1, fn(offset_y) ->
+        if offset_x == offset_y or offset_x == size_y - 1 - offset_y do
+          {origin_x + offset_x, origin_y + offset_y}
+        else
+          nil
+        end
+      end)
+    end)
+    |> Enum.reject(&(&1 == nil))
+    |> MapSet.new
+
+  end
+
+  def load_pattern(:xing, {origin_x, origin_y}, {size_x, size_y}) do
+    pattern = """
+    ................
+    ...........***..
+    ..........***...
+    ..***....***....
+    ...***..***.....
+    ..***.***.......
+    .***...***......
+    ........***.....
+    .........***....
+    """
+    load_predefined_pattern(pattern, {size_x, size_y}, {origin_x, origin_y})
+  end
+
+
+
+  defp load_predefined_pattern(pattern, {size_x, size_y}, {origin_x, origin_y}) do
     load(pattern, {size_x, size_y})
       |> Enum.map(fn({x,y}) ->  {x + origin_x, y + origin_y } end)
       |> Enum.filter(fn({x,y}) -> (x - origin_x) < size_x && (y - origin_y) < size_y end)
