@@ -17,7 +17,7 @@ defmodule BoardServerTest do
   test "gets a random board state" do
     {:ok, pid} = BoardServer.start_link({0,0}, {1,1}, [density: 100])
     {:ok, board} = BoardServer.current_board(pid)
-    assert %Board{origin: {0,0}, size: {1,1}, alive_cells: MapSet.new([{0,0}])} == board
+    assert %Board{origin: {0,0}, size: {1,1}, alive_cells: MapSet.new([])} == board
   end
 
   test "gets new board state from defined initial board" do
