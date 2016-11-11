@@ -55,6 +55,13 @@ defmodule GameOfLife.PatternLoader do
 
   def load_pattern(:big_x, {origin_x, origin_y}, size) do
     {size_x, size_y} = size
+    square_size = if (size_x > size_y) do
+      size_y
+    else
+      size_x
+    end
+    extra_offset_x = div(size_x - square_size,2)
+    extra_offset_y = div(size_y - square_size, 2)
     Enum.flat_map(0..size_x-1, fn(offset_x) ->
       Enum.map(0..size_y-1, fn(offset_y) ->
         if offset_x == offset_y or offset_x == size_y - 1 - offset_y do
@@ -65,6 +72,7 @@ defmodule GameOfLife.PatternLoader do
       end)
     end)
     |> Enum.reject(&(&1 == nil))
+    |> Enum.map(fn({x,y}) ->  {x + extra_offset_x, y + extra_offset_y} end)
     |> MapSet.new
 
   end
