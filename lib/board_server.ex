@@ -7,7 +7,8 @@ defmodule GameOfLife.BoardServer do
 
   def start_link(origin, board_size, opts \\ []) do
     density = Keyword.get(opts, :density, 50)
-    board = Keyword.get(opts, :board, default_board(origin, board_size, density))
+    pattern = Keyword.get(opts, :pattern, :random)
+    board = Keyword.get(opts, :board, default_board(origin, board_size, pattern, density))
     GenServer.start_link(__MODULE__, board)
   end
 
@@ -38,10 +39,16 @@ defmodule GameOfLife.BoardServer do
     {:reply, {:ok, board}, board}
   end
 
-  defp default_board(origin, {size_x, size_y} = board_size, density) do
+  defp default_board(origin, {size_x, size_y} = board_size, pattern, density) do
+    if pattern == :random do
+      %Board{origin: origin, size: board_size, alive_cells: PatternLoader.load_random(origin, board_size, density)}
+    else
+      %Board{origin: origin, size: board_size, alive_cells: PatternLoader.load_pattern(pattern, origin, board_size)}
+    end
+
     #%Board{origin: origin, size: board_size, alive_cells: PatternLoader.load_random(origin, board_size, density)}
-    #    %Board{origin: origin, size: board_size, alive_cells: PatternLoader.load_glider(origin, board_size)}
-        %Board{origin: origin, size: board_size, alive_cells: PatternLoader.load_spaceship(origin, board_size)}
+    # %Board{origin: origin, size: board_size, alive_cells: PatternLoader.load_glider(origin, board_size)}
+    # %Board{origin: origin, size: board_size, alive_cells: PatternLoader.load_spaceship(origin, board_size)}
   end
 
 end

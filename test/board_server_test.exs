@@ -8,17 +8,17 @@ defmodule BoardServerTest do
     :ok
   end
 
-  test "gets new board state" do
-    {:ok, pid} = BoardServer.start_link({0,0}, {100,100})
-    {:ok, board} = BoardServer.next_board_state(pid)
-    assert 1 == board.generation
-  end
+    test "gets new board state" do
+      {:ok, pid} = BoardServer.start_link({0,0}, {100,100})
+      {:ok, board} = BoardServer.next_board_state(pid)
+      assert 1 == board.generation
+    end
 
-  test "gets a random board state" do
-    {:ok, pid} = BoardServer.start_link({0,0}, {1,1}, [density: 100])
-    {:ok, board} = BoardServer.current_board(pid)
-    assert %Board{origin: {0,0}, size: {1,1}, alive_cells: MapSet.new([])} == board
-  end
+    test "gets a random board state" do
+      {:ok, pid} = BoardServer.start_link({0,0}, {1,1}, [density: 100])
+      {:ok, board} = BoardServer.current_board(pid)
+      assert %Board{origin: {0,0}, size: {1,1}, alive_cells: MapSet.new([{0,0}])} == board
+    end
 
   test "gets new board state from defined initial board" do
     board = %Board{size: {5,5},

@@ -39,7 +39,7 @@ defmodule PatternLoaderTest do
   end
 
   test "loads a glider with right coordinates" do
-    result = PatternLoader.load_glider({10,10})
+    result = PatternLoader.load_pattern(:glider,{10,10},{36, 9})
     assert {11,12} in Enum.sort result
   end
 
@@ -63,4 +63,15 @@ defmodule PatternLoaderTest do
     cells = PatternLoader.load_random({100,100}, {2,2}, 100)
     assert cells == MapSet.new([{100,100},{100,101},{101,100},{101,101}])
   end
+
+  test "loading a 3x3 x in offset 100,100" do
+    cells = PatternLoader.load_pattern(:big_x, {100,100}, {3,3})
+    assert MapSet.new([{100, 100}, {100, 102}, {101, 101}, {102, 100}, {102, 102}]) == cells
+  end
+
+  test "loading a 4x4 x" do
+    cells = PatternLoader.load_pattern(:big_x, {0,0}, {4,4})
+    assert MapSet.new([{0, 0}, {0, 3}, {1, 1}, {1, 2}, {2, 1}, {2, 2}, {3, 0}, {3, 3}]) == cells
+  end
+
 end

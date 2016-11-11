@@ -15,7 +15,7 @@ defmodule GameOfLife.BoardManager do
   end
 
   def start_children(supervisor_pid, {board_size, board_id}) do
-    {:ok, board_server_pid} = Supervisor.start_child(supervisor_pid, worker(BoardServer, [board_id, board_size]))
+    {:ok, board_server_pid} = Supervisor.start_child(supervisor_pid, worker(BoardServer, [board_id, board_size, [pattern: :big_x]]))
     :ok = GenEvent.add_handler(GameOfLife.EventManager, {BoardSynchronizer, board_id}, {board_server_pid, board_id, board_size})
     GameOfLife.GridManager.confirm_join(board_server_pid, board_id)
   end
