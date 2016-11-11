@@ -38,16 +38,12 @@ defmodule GameOfLife.BoardServer do
     {:reply, {:ok, board}, board}
   end
 
-  defp default_board(origin, {size_x, size_y} = board_size, pattern, density) do
+  defp default_board(origin, {_size_x, _size_y} = board_size, pattern, density) do
     if pattern == :random do
       %Board{origin: origin, size: board_size, alive_cells: PatternLoader.load_random(origin, board_size, density)}
     else
       %Board{origin: origin, size: board_size, alive_cells: PatternLoader.load_pattern(pattern, origin, board_size)}
     end
-
-    #%Board{origin: origin, size: board_size, alive_cells: PatternLoader.load_random(origin, board_size, density)}
-    # %Board{origin: origin, size: board_size, alive_cells: PatternLoader.load_glider(origin, board_size)}
-    # %Board{origin: origin, size: board_size, alive_cells: PatternLoader.load_spaceship(origin, board_size)}
   end
 
 end
