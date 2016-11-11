@@ -5,13 +5,18 @@ defmodule GameOfLife do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
-    children =
+    boards = (System.get_env("BOARDS") || "2") |> String.to_integer
+
+    grid_workers =
           [ worker(GameOfLife.EventManager, []),
             worker(GameOfLife.GridManager, []),
-            worker(GameOfLife.Ticker, []),
-            supervisor(GameOfLife.BoardManager, [], [id: :a]),
-            supervisor(GameOfLife.BoardManager, [], [id: :b]) ]
+            worker(GameOfLife.Ticker, [])]
 
+    board_managers = Enum.map(0..(boards - 1), fn n ->
+        supervisor(GameOfLife.BoardManager, [], [id: n])
+      end)
+
+    children = grid_workers ++ board_managers
     opts = [strategy: :one_for_one, name: GameOfLife.Supervisor]
     start_status = Supervisor.start_link(children, opts)
     spawn(fn -> GameOfLife.Runner.run end)
