@@ -43,6 +43,24 @@ defmodule GameOfLife.PatternLoader do
     load_predefined_pattern(pattern, {size_x, size_y}, {origin_x, origin_y})
   end
 
+  def load_pattern(:oscillator, {origin_x, origin_y}, {size_x, size_y}) do
+    pattern = """
+    ....
+    ***
+    ...
+    """
+    load_predefined_pattern(pattern, {size_x, size_y}, {origin_x, origin_y})
+  end
+
+  def load_pattern(:acorn, {origin_x, origin_y}, {size_x, size_y}) do
+    pattern = """
+    .*.....
+    ...*...
+    **..***
+    """
+    load_predefined_pattern(pattern, {size_x, size_y}, {origin_x+round(size_x/2), origin_y-round(size_y/2)})
+  end
+
   def load_pattern(:space_ship, {origin_x, origin_y}, {size_x, size_y}) do
     pattern = """
     .*..*
