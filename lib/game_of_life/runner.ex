@@ -13,6 +13,12 @@ defmodule GameOfLife.Runner do
         {:ok, _ } = BoardServer.next_board_state(pid)
       end)
 
+    Map.values(pids)
+    |> Enum.map(fn pid ->
+        {:ok, board } = BoardServer.current_board(pid)
+        GenEvent.notify(GameOfLife.EventManager, {:board_update, board})
+      end)
+
     {:ok, %Ticker{interval: interval}} = Ticker.get_state
     :timer.sleep(interval)
     do_run
